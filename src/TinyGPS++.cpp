@@ -23,6 +23,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "TinyGPS++.h"
 
+#include <stdio.h>
+#include <string.h>
+#include <zephyr/zephyr.h>
+
+unsigned long millis(void) {
+    return k_uptime_get_32() / 1000;
+}
+
+#include <math.h>
+#define TWO_PI 6.2831855
+double radians(double degrees) {
+  return (degrees * 71) / 4068;
+}
+double degrees(double radians) {
+  return radians * 57296 / 1000;
+}
+double sq(double n) {
+  return n*n;
+}
+
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -161,7 +181,7 @@ bool TinyGPSPlus::endOfTermHandler()
   // If it's the checksum term, and the checksum checks out, commit
   if (isChecksumTerm)
   {
-    byte checksum = 16 * fromHex(term[0]) + fromHex(term[1]);
+    uint8_t checksum = 16 * fromHex(term[0]) + fromHex(term[1]);
     if (checksum == parity)
     {
       passedChecksumCount++;
